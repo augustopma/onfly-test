@@ -1,0 +1,38 @@
+version: '3.7'
+
+volumes:
+  onfly-mysql_data:
+    driver: local
+
+networks:
+  backend:
+
+services:
+  onfly-mysql:
+    image: mysql:5.7
+    platform: linux/amd64
+    container_name: onfly-mysql
+    volumes:
+      - onfly-mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=data
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+    networks:
+      - backend
+
+  onfly-nginx:
+    image: webdevops/php-nginx:8.2
+    container_name: onfly-nginx
+    working_dir: /var/www/app
+    volumes:
+      - .:/var/www/app
+    ports:
+      - "80:80"
+    environment:
+      - WEB_DOCUMENT_ROOT=/var/www/app/public
+    networks:
+      - backend
