@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ExpenseResource extends JsonResource
+class DeleteExpenseResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,17 +14,11 @@ class ExpenseResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $data = [
-            'id' => $this->getId(),
-            'description' => $this->getDescription(),
-            'expense_date' => $this->getExpenseDate(),
-            'user_id' => $this->getUser()->id,
-            'amount' => $this->getAmount(),
-        ];
+        $id = $this->getId();
 
         return [
             'success' => true,
-            'data' => $data,
+            'message' => "Despesa '$id' deletada com sucesso."
         ];
     }
 }

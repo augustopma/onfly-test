@@ -119,6 +119,23 @@ class Expense extends Model
         return $this->expenseRepository->load($this);
     }
 
+    public function deleteExpense(): void
+    {
+        if (!$this->expenseRepository->delete($this)) {
+            throw new \Exception("Ocorreu um erro ao deletar a despesa, por favor contate o administrador do sistema.");
+        }
+    }
+
+    public function updateExpense(): Expense
+    {
+        return $this->expenseRepository->update($this);
+    }
+
+    public function loadAll(): array
+    {
+        return $this->expenseRepository->all();
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

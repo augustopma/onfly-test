@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ExpenseFormRequest extends FormRequest
+class AuthFormRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,20 +24,22 @@ class ExpenseFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'description' => 'string',
-            'expense_date' => 'required|date',
-            'amount' => 'required|numeric',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8'
         ];
     }
 
     public function messages(): array
     {
         return [
-            'description.string' => 'A descrição da despesa deve ser uma string.',
-            'expense_date.required' => 'A data da despesa é obrigatória.',
-            'expense_date.date' => 'O campo \'expense_date\' deve ser uma data.',
-            'amount.required' => 'A quantia da despesa é obrigatória.',
-            'amount.numeric' => 'A quantia deve ser um valor numérico.',
+            'name.required' => 'O nome do usuário é obrigatório.',
+            'name.string' => 'O nome deve ser uma string.',
+            'email.required' => 'O email é obrigatória.',
+            'email.unique' => 'O email fornecido já foi cadastrado no sistema.',
+            'password.required' => 'A senha é obrigatória.',
+            'password.string' => 'A senha deve ser uma string.',
+            'password.min' => 'A senha deve ter no mínimo 8 caracteres.',
         ];
     }
 

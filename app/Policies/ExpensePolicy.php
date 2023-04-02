@@ -17,11 +17,11 @@ class ExpensePolicy
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Determine whether the user can interact with the model.
      */
-    public function view(User $user, Expense $expense): bool
+    public function canInteract(User $user, Expense $expense): bool
     {
-        return $user->id === $expense->user_id;
+        return $user->id === $expense->getUser()->id;
     }
 
     /**
@@ -30,21 +30,5 @@ class ExpensePolicy
     public function create(User $user): bool
     {
         return true;
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Expense $expense): bool
-    {
-        return $user->id === $expense->user_id;
-    }
-
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Expense $expense): bool
-    {
-        return $user->id === $expense->user_id;
     }
 }

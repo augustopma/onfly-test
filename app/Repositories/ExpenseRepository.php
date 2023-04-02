@@ -29,7 +29,7 @@ class ExpenseRepository implements ExpenseRepositoryInterface
         $record = DB::table('expenses')->where('id', $expense->getId())->first();
         
         if (!$record) {
-            throw new \Exception("Usuário não encontrado.");            
+            throw new \Exception("Despesa não encontrada.");
         }
 
         $expense
@@ -38,6 +38,31 @@ class ExpenseRepository implements ExpenseRepositoryInterface
             ->setAmount($record->amount)
             ->setUser(User::find($record->user_id))
         ;
+
+        return $expense;
+    }
+
+    public function delete(Expense $expense): bool
+    {
+        return DB::table('expenses')->where('id', $expense->getId())->delete();
+    }
+
+    public function all(): array
+    {
+        return DB::table('expenses')->get()->toArray();
+    }
+
+    public function update(Expense $expense): Expense
+    {
+        $affected = DB::table('expenses')->where('id', $expense->getId())->update([
+            'description' => $expense->getDescription(),
+            'expense_date' => $expense->getExpenseDate(),
+            'amount' => $expense->getAmount(),
+        ]);
+
+        if (!$affected) {
+            throw new \Exception("Erro ao atualizar despesa. Por favor contate o administrador do sistema.");
+        }
 
         return $expense;
     }

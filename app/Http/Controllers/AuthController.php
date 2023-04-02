@@ -3,38 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\AuthFormRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(AuthFormRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8'
-        ]);
-
-        if($validator->fails()) {
-            return response()->json($validator->errors());       
-        }
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password)
          ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()
             ->json([
+                'success' => true,
+                'message' => 'Usuário cadastrado com sucesso.',
                 'data' => $user,
-                'access_token' => $token,
-                'token_type' => 'Bearer'
             ]);
     }
 
@@ -50,19 +38,9 @@ class AuthController extends Controller
 
         return response()
             ->json([
-                'message' => 'Hi '.$user->name.', welcome to home',
+                'success' => true,
+                'message' => 'Login realizado com sucesso.',
                 'access_token' => $token,
-                'token_type' => 'Bearer'
             ]);
-    }
-
-    // method for user logout and delete token
-    public function logout()
-    {
-        auth()->user()->tokens()->delete();
-
-        return [
-            'message' => 'You have successfully logged out and the token was successfully deleted'
-        ];
     }
 }

@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Expense;
 use App\Http\Resources\ExpenseResource;
-use Illuminate\Http\Request;
+use App\Http\Resources\DeleteExpenseResource;
+use App\Http\Resources\UpdateExpenseResource;
+use App\Http\Resources\ListExpenseResource;
 use App\Http\Requests\ExpenseFormRequest;
 use App\Repositories\ExpenseRepository;
+use Illuminate\Http\Response;
 
 class ExpenseController extends Controller
 {
@@ -15,7 +18,13 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $expenses = (new Expense(new ExpenseRepository()))->loadAll();
+
+            return new ListExpenseResource($expenses);
+        } catch (\Exception $e) {
+            return $this->showError($e);
+        }
     }
 
     /**
@@ -42,13 +51,7 @@ class ExpenseController extends Controller
 
             return new ExpenseResource($expense);
         } catch (\Exception $e) {
-            return response(
-                [
-                    'success' => false,
-                    'error' => $e->getMessage()
-                ],
-                400
-            );
+            return $this->showError($e);
         }
     }
 
@@ -63,15 +66,11 @@ class ExpenseController extends Controller
                 ->loadExpense()
             ;
 
+            $this->authorize('canInteract', $expense);
+
             return new ExpenseResource($expense);
         } catch (\Exception $e) {
-            return response(
-                [
-                    'success' => false,
-                    'error' => $e->getMessage()
-                ],
-                400
-            );
+            return $this->showError($e);
         }
     }
 
@@ -86,36 +85,58 @@ class ExpenseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ExpenseFormRequest $request, Expense $expense)
+    public function update($id, ExpenseFormRequest $request)
     {
-        $this->authenticateRequest($request, $expense, 'update');
+        try {
+            $expense = (new Expense(new ExpenseRepository()))
+                ->setId($id)
+                ->loadExpense()
+            ;
 
-        $expense->setDescription($request->description);
-        
+            $this->authorize('canInteract', $expense);
+
+            $expense
+                ->setDescription($request->description)
+                ->setExpenseDate($request->expense_date)
+                ->setAmount($request->amount)
+                ->updateExpense()
+            ;
+
+            return new UpdateExpenseResource($expense);
+        } catch (\Exception $e) {
+            return $this->showError($e);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Expense $expense)
+    public function destroy(string $id)
     {
-        $this->authenticateRequest($request, $expense, 'delete');
+        try {
+            $expense = (new Expense(new ExpenseRepository()))
+                ->setId($id)
+                ->loadExpense()
+            ;
 
-        $expense->delete();
+            $this->authorize('canInteract', $expense);
 
-        return $this->sendResponse([], 'Despesa deletada com sucesso.');
+            $expense->deleteExpense();
+
+            return new DeleteExpenseResource($expense);
+        } catch (\Exception $e) {
+            return $this->showError($e);
+        }
     }
 
-    private function authenticateRequest(Request $request, Expense $expense, string $requestName)
+    private function showError(\Exception $e): Response
     {
-        if ($request->user()->cannot($requestName, $expense)) {
-            return response()->json(
-                [
-                    'status' => 'failure',
-                    'message' => 'Usuário não tem permissão para realizar essa ação.'
-                ],
-                403
-            );
-        }
+        return response(
+            [
+                'success' => false,
+                'error' => $e->getMessage()
+            ],
+            400
+        );
     }
 }

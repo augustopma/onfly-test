@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ExpenseResource extends JsonResource
+class UpdateExpenseResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -24,6 +24,7 @@ class ExpenseResource extends JsonResource
 
         return [
             'success' => true,
+            'message' => 'Despesa atualizada com sucesso.',
             'data' => $data,
         ];
     }

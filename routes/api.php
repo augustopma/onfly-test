@@ -21,5 +21,4 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::resource('expenses', ExpenseController::class);
-    Route::resource('users', UserController::class);
 });
