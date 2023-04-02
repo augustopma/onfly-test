@@ -10,16 +10,20 @@ use App\Http\Resources\ListExpenseResource;
 use App\Http\Requests\ExpenseFormRequest;
 use App\Repositories\ExpenseRepository;
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 
 class ExpenseController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $expenses = (new Expense(new ExpenseRepository()))->loadAll();
+            $expenses = (new Expense(new ExpenseRepository()))
+                ->setUser($request->user())
+                ->loadAll()
+            ;
 
             return new ListExpenseResource($expenses);
         } catch (\Exception $e) {

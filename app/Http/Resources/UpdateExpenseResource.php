@@ -18,7 +18,7 @@ class UpdateExpenseResource extends JsonResource
             'id' => $this->getId(),
             'description' => $this->getDescription(),
             'expense_date' => $this->getExpenseDate(),
-            'user_id' => $this->getUser()->id,
+            'user_id' => $this->getUser()->getId(),
             'amount' => $this->getAmount(),
         ];
 

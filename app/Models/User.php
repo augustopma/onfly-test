@@ -28,8 +28,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    private int $id;
-
     public function setId(int $id): User
     {
         $this->id = $id;

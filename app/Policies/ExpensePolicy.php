@@ -21,7 +21,7 @@ class ExpensePolicy
      */
     public function canInteract(User $user, Expense $expense): bool
     {
-        return $user->id === $expense->getUser()->id;
+        return $user->id === $expense->getUser()->getId();
     }
 
     /**

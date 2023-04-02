@@ -16,7 +16,7 @@ class ExpenseRepository implements ExpenseRepositoryInterface
             'description' => $expense->getDescription(),
             'expense_date' => $expense->getExpenseDate(),
             'amount' => $expense->getAmount(),
-            'user_id' => $expense->getUser()->id,
+            'user_id' => $expense->getUser()->getId(),
         ]);
 
         $expense->setId($id);
@@ -47,9 +47,9 @@ class ExpenseRepository implements ExpenseRepositoryInterface
         return DB::table('expenses')->where('id', $expense->getId())->delete();
     }
 
-    public function all(): array
+    public function all(Expense $expense): array
     {
-        return DB::table('expenses')->get()->toArray();
+        return DB::table('expenses')->where('user_id', $expense->getUser()->getId())->get()->toArray();
     }
 
     public function update(Expense $expense): Expense

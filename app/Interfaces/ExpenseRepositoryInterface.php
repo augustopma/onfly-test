@@ -10,5 +10,5 @@ interface ExpenseRepositoryInterface
     public function load(Expense $expense): Expense;
     public function delete(Expense $expense): bool;
     public function update(Expense $expense): Expense;
-    public function all(): array;
+    public function all(Expense $expense): array;
 }

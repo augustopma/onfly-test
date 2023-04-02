@@ -133,7 +133,7 @@ class Expense extends Model
 
     public function loadAll(): array
     {
-        return $this->expenseRepository->all();
+        return $this->expenseRepository->all($this);
     }
 
     public function user(): BelongsTo
