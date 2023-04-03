@@ -3,6 +3,8 @@ version: '3.7'
 volumes:
   onfly-mysql_data:
     driver: local
+  onfly-redis_data:
+    driver: local
 
 networks:
   backend:
@@ -36,3 +38,14 @@ services:
       - WEB_DOCUMENT_ROOT=/var/www/app/public
     networks:
       - backend
+
+  onfly-redis:
+    image: redis:4.0
+    container_name: onfly-redis
+    command: --appendonly yes
+    networks:
+      - backend
+    volumes:
+      - onfly-redis_data:/data
+    ports:
+      - "6379:6379"

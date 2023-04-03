@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\ExpenseNotification;
 use App\Interfaces\ExpenseRepositoryInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -44,7 +45,7 @@ class Expense extends Model
     public function setDescription(?string $description): Expense
     {
         if (!is_null($description) && strlen($description) > self::MAX_DESCRIPTION_SIZE) {
-            throw new \Exception("A descrição não pode ter mais de " . self::MAX_DESCRIPTION_SIZE . " caracteres.");
+            throw new \RuntimeException("A descrição não pode ter mais de " . self::MAX_DESCRIPTION_SIZE . " caracteres.");
         }
 
         $this->description = $description;
@@ -58,7 +59,7 @@ class Expense extends Model
         $todayTimestamp = strtotime(date('Y-m-d'));
 
         if ($dateTimestamp > $todayTimestamp) {
-            throw new \Exception("A data da despesa não pode ser maior que o dia de hoje.");
+            throw new \RuntimeException("A data da despesa não pode ser maior que o dia de hoje.");
         }
 
         $this->expenseDate = date('Y-m-d', $dateTimestamp);
@@ -69,7 +70,7 @@ class Expense extends Model
     public function setAmount(float $amount): Expense
     {
         if ($amount < self::MIN_AMOUNT_VALUE) {
-            throw new \Exception("A quantia '$amount' não pode ser menor que " . self::MIN_AMOUNT_VALUE);
+            throw new \RuntimeException("A quantia '$amount' não pode ser menor que " . self::MIN_AMOUNT_VALUE);
         }
 
         $this->amount = $amount;
@@ -111,7 +112,9 @@ class Expense extends Model
 
     public function createExpense(): Expense
     {
-        return $this->expenseRepository->create($this);
+        $this->expenseRepository->create($this);
+        $this->getUser()->notify((new ExpenseNotification()));
+        return $this;
     }
 
     public function loadExpense(): Expense
@@ -122,7 +125,7 @@ class Expense extends Model
     public function deleteExpense(): void
     {
         if (!$this->expenseRepository->delete($this)) {
-            throw new \Exception("Ocorreu um erro ao deletar a despesa, por favor contate o administrador do sistema.");
+            throw new \RuntimeException("Ocorreu um erro ao deletar a despesa, por favor contate o administrador do sistema.");
         }
     }
 

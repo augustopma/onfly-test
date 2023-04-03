@@ -15,7 +15,7 @@ class ExpenseTest extends TestCase
             Testando uma descrição que possui mais de 191 caracteres."
         ;
 
-        $this->expectException(\Exception::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage("A descrição não pode ter mais de " . Expense::MAX_DESCRIPTION_SIZE . " caracteres.");
 
         (new Expense())->setDescription($description);
@@ -25,7 +25,7 @@ class ExpenseTest extends TestCase
     {
         $amount = -1;
 
-        $this->expectException(\Exception::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage("A quantia '$amount' não pode ser menor que " . Expense::MIN_AMOUNT_VALUE);
 
         (new Expense())->setAmount($amount);
@@ -35,7 +35,7 @@ class ExpenseTest extends TestCase
     {
         $expenseDate = "2024-01-01";
 
-        $this->expectException(\Exception::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage("A data da despesa não pode ser maior que o dia de hoje.");
 
         (new Expense())->setExpenseDate($expenseDate);
