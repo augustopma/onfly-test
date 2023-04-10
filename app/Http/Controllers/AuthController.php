@@ -30,7 +30,7 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $request['email'])->firstOrFail();
-
+        $request->session()->regenerate();
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return new AuthLoginResource($token);

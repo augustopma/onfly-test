@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('/login-web', [AuthController::class, 'login']);
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('app');
 });

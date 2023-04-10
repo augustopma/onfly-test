@@ -13,6 +13,16 @@ docker-compose exec onfly-nginx bash -c "su -c 'php artisan key:generate' applic
 docker-compose exec onfly-nginx php artisan migrate
 ```
 
+Instale os pacotes
+```
+npm install
+```
+
+Obs.: Projeto já foi buildado. Acesse o front pela url
+```
+http://localhost
+```
+
 ## Testes
 
 Para rodar os testes utitlize o seguinte comando
